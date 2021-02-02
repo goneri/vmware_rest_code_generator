@@ -722,6 +722,7 @@ from ansible_collections.vmware.vmware_rest.plugins.module_utils.vmware_rest imp
     get_subdevice_type,
     list_devices,
     open_session,
+    path_to_moid,
     prepare_payload,
     update_changed_flag,
     )
@@ -1068,6 +1069,8 @@ def build_url(params):
         FUNC = """
 # template: FUNC
 async def entry_point(module, session):
+    if module.params.get("{list_index}") and module.params.get("{list_index}").startswith('/'):
+        module.params["{list_index}"] = await path_to_moid(session, module.params, module.params["{list_index}"])
     url = build_url(module.params)
     async with session.get(url) as resp:
         _json = await resp.json()
